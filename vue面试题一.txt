@@ -1,0 +1,99 @@
+面试题目：
+1、v-if 和 v-for 哪个优先级高？如果两个同时出现，应该怎么优化得到更好的性能？
+
+答：1、v-for优先级更高，因为 v-if 会重复运行于每个 v-for 循环中。
+	源码解析：
+	v-for:
+	export function processFor (el: ASTElement) {
+	  let exp
+	  if ((exp = getAndRemoveAttr(el, 'v-for'))) { // 获取v-for 遍历对象
+		const res = parseFor(exp)
+		if (res) {
+		  extend(el, res) // 在此遍历
+		} else if (process.env.NODE_ENV !== 'production') {
+		  warn(
+			`Invalid v-for expression: ${exp}`,
+			el.rawAttrsMap['v-for']
+		  )
+		}
+	  }
+	}
+	
+	export function parseFor (exp: string): ?ForParseResult {
+	  const inMatch = exp.match(forAliasRE)
+	  if (!inMatch) return
+	  const res = {}
+	  res.for = inMatch[2].trim()
+	  const alias = inMatch[1].trim().replace(stripParensRE, '')
+	  const iteratorMatch = alias.match(forIteratorRE)
+	  if (iteratorMatch) {
+		res.alias = alias.replace(forIteratorRE, '').trim()
+		res.iterator1 = iteratorMatch[1].trim()
+		if (iteratorMatch[2]) {
+		  res.iterator2 = iteratorMatch[2].trim()
+		}
+	  } else {
+		res.alias = alias
+	  }
+	  return res
+	}
+	
+	v-if:
+	function processIf (el) {
+	  const exp = getAndRemoveAttr(el, 'v-if') // 在这里从AST模板对象中取出相应的属性
+	  if (exp) {
+		el.if = exp
+		addIfCondition(el, {
+		  exp: exp,
+		  block: el
+		})
+	  } else {
+		if (getAndRemoveAttr(el, 'v-else') != null) { // 如果不存在，则查看v-else,并将el.else置为true
+		  el.else = true
+		}
+		const elseif = getAndRemoveAttr(el, 'v-else-if') // 查看v-else-if,如果存在，将el.elseif置为elseif
+		if (elseif) {
+		  el.elseif = elseif
+		}
+	  }
+	}
+	// 如果存在，则push进el.ifConditions
+	export function addIfCondition (el: ASTElement, condition: ASTIfCondition) {
+	  if (!el.ifConditions) {
+		el.ifConditions = []
+	  }
+	  el.ifConditions.push(condition)
+	}
+	
+	// note: this only removes the attr from the Array (attrsList) so that it
+	// doesn't get processed by processAttrs.
+	// By default it does NOT remove it from the map (attrsMap) because the map is
+	// needed during codegen.
+	export function getAndRemoveAttr (
+	  el: ASTElement,
+	  name: string,
+	  removeFromMap?: boolean
+	): ?string {
+	  let val
+	  if ((val = el.attrsMap[name]) != null) {
+		const list = el.attrsList
+		for (let i = 0, l = list.length; i < l; i++) {
+		  if (list[i].name === name) {
+			list.splice(i, 1)
+			break
+		  }
+		}
+	  }
+	  if (removeFromMap) {
+		delete el.attrsMap[name]
+	  }
+	  return val
+	}
+	
+	2、v-if 置于外层元素 或者 <template> ，保证在v-for遍历生成vnode之前完成筛选操作。
+	<template v-if="arrs.length">
+	  <li v-for="item of arrs" :key="arrs.id">
+		{{ item }}
+	  </li>
+	</template>
+	<template v-else>hello</template>

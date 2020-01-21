@@ -30,7 +30,7 @@ Vue组件data选项为什么必须是个函数而Vue的根实例则没有此限�
   </body>
 </html>
 
-修改为：问题得以解决
+修改为：
 <!DOCTYPE html>
 <html>
   <head>

@@ -97,3 +97,5 @@
 	  </li>
 	</template>
 	<template v-else>hello</template>
+        在数据层可以对数据进行计算属性和filter过滤出需要判断的属性进行优化操作
+	

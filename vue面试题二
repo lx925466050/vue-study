@@ -4,4 +4,59 @@ Vue组件data选项为什么必须是个函数而Vue的根实例则没有此限�
 答：组件要被复用，data需要在组件内重新声明以保证各个组件的内独立性，而以函数形式在每次
    调用时都会重新声明变量。
    根实例只有一个，不会考虑复用，因此没有限制。
+实例分析：当我们修改两个实例中任意一个属性的时候，另外一个都会改变。
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>my-vue</title>
+  </head>
+  <body>
+    <div id="app">111</div>
+    <!-- built files will be auto injected -->
+    <script>
+      var vueComponent = function() {}
+      vueComponent.prototype.data = {
+        num1: 1,
+        num2: 2,
+      }
+      var component1 = new vueComponent()
+      var component2 = new vueComponent()
+      
+      component1.data.a = 3
+      console.log(component2.data.a);
+    </script>
+  </body>
+</html>
+
+修改为：问题得以解决
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>my-vue</title>
+  </head>
+  <body>
+    <div id="app">111</div>
+    <!-- built files will be auto injected -->
+    <script>
+      var vueComponent = function() {
+        this.data = this.data()
+      }
+      vueComponent.prototype.data = function() {
+        return {
+          num1: 1,
+          num2: 2,
+        }
+      }
+      var component1 = new vueComponent()
+      var component2 = new vueComponent()
+
+      component1.data.num1 = 3
+      console.log(component2.data.num1);
+    </script>
+  </body>
+</html>
 

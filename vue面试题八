@@ -1,0 +1,15 @@
+vue面试题第八题：
+谈谈你对MVC,MVP,MVVM的理解。
+
+答：1.MVC：
+分为 Model（模型），Controller(控制器)，View（视图）
+View是通过Controller和Model进行联系的，Controller是Model和View的协调者，view和model不直接联系，且基本联系是单向的。
+
+2.MVP：
+分为Controller/Presenter, Model, View
+其中Controller/Presenter负责逻辑处理， Model提供数据，View负责显示。
+主要的逻辑都放到了Presenter里面来实现，而且Presenter是通过定义好的接口与view进行交互，从而可以使在变更View的时候保持Presenter不变。
+
+3.MVVM：
+分为 ViewModel, Model, View
+其中ViewModel实现了自动同步，自动更新的功能，View的变化会自动更新到ViewModel，ViewModel的变化自动同步到View上。

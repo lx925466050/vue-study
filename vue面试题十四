@@ -1,0 +1,22 @@
+Vue 生命周期的理解
+
+答：vue实例每次在被创建的过程中，都会经历一系列初始化过程，比如需要设置数据监听，编译模板，挂载实例到DOM上，并在数据变化时更新DOM等
+这些被称为vue的生命周期。
+
+vue实例的生命周期的过程中会运行生命周期的钩子，我们可以在钩子上添加自己的业务逻辑。
+
+vue实例经历了三个阶段
+初始化，更新，销毁
+初始化：beforeCreate,created,beforeMount,mounted
+更新：beforeUpdate,updated
+销毁：beforeDestroy, destroyed
+
+各生命周期使用场景
+beforeCreate:组件实例还没有被创建，通常用于一些初始化操作。
+created:组件初始化完毕，各种数据可以使用，常用于异步获取数据操作。
+beforeMount:未执行渲染，更新，DOM没有被创建。
+mounted:初始化结束，DOM已经创建，可用于访问数据和DOM元素。
+beforeUpdate:数据更新前。
+updated:更新后，所有状态已经是最新的了。
+beforeDestroy:组件实例销毁前，常用于定时器的取消。
+destroyed:组件实例已被销毁。

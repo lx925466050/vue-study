@@ -1,0 +1,14 @@
+
+答：全局的
+    单个路由独享的
+    组件级
+    
+    
+    路由守卫为：
+    全局守卫：beforeEach
+    后置守卫：afterEach
+    全局解析守卫：beforeResolve
+    路由独享守卫：beforeEnter
+    
+    组建内的导航钩子：beforeRouteEnter、beforeRouteUpdate、beforeRouteLeave
+    
